@@ -159,6 +159,20 @@ const UI = {
         `;
     },
 
+    // Show messages inbox section
+    showMessages() {
+        const chatArea = document.getElementById('chatMessages');
+        // For demo, show placeholder messages and requests
+        chatArea.innerHTML = `
+            <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
+                <h2 class="text-xl font-semibold mb-4">Messages Inbox</h2>
+                <div id="messagesList" class="space-y-4 max-h-[400px] overflow-y-auto">
+                    <p class="text-gray-500">No new messages or requests.</p>
+                </div>
+            </div>
+        `;
+    },
+
     // Show toast notification
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
