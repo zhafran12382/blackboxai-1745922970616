@@ -165,23 +165,6 @@ const CHAT = {
         // Add to inbox requests
         this.inboxRequests.push(request);
         this.updateMessagesList();
-
-        const requestElement = document.createElement('div');
-        requestElement.className = 'fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 z-50';
-        requestElement.innerHTML = `
-            <p class="text-sm text-gray-600">${request.fromUsername} wants to start a private chat</p>
-            <div class="mt-2 flex space-x-2">
-                <button class="px-3 py-1 bg-indigo-600 text-white rounded-md text-sm"
-                    onclick="CHAT.acceptPrivateChat('${request.from}', '${request.fromUsername}')">
-                    Accept
-                </button>
-                <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm"
-                    onclick="CHAT.rejectPrivateChat('${request.from}')">
-                    Decline
-                </button>
-            </div>
-        `;
-        document.body.appendChild(requestElement);
     },
 
     // Add message to inbox and update UI
