@@ -94,7 +94,11 @@ const UI = {
     showProfile() {
         const user = JSON.parse(sessionStorage.getItem('user'));
         const chatArea = document.getElementById('chatMessages');
-        
+        const chatContainer = document.querySelector('.h-screen.flex.flex-col');
+
+        // Hide chat container
+        if (chatContainer) chatContainer.style.display = 'none';
+
         chatArea.innerHTML = `
             <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
                 <div class="text-center mb-6">
@@ -162,7 +166,6 @@ const UI = {
     // Show messages inbox section
     showMessages() {
         const chatArea = document.getElementById('chatMessages');
-        // For demo, show placeholder messages and requests
         chatArea.innerHTML = `
             <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
                 <h2 class="text-xl font-semibold mb-4">Messages Inbox</h2>
@@ -171,6 +174,11 @@ const UI = {
                 </div>
             </div>
         `;
+
+        // Update messages list from CHAT module
+        if (window.CHAT) {
+            CHAT.updateMessagesList();
+        }
     },
 
     // Show toast notification
