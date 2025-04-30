@@ -8,6 +8,8 @@ const CHAT = {
         this.currentChannel = 'global';
         this.privateChannels = new Map();
         this.pendingRequests = new Map();
+        this.inboxMessages = [];
+        this.inboxRequests = [];
         this.setupEventListeners();
     },
 
@@ -160,6 +162,10 @@ const CHAT = {
 
     // Handle incoming private chat request
     handlePrivateChatRequest(request) {
+        // Add to inbox requests
+        this.inboxRequests.push(request);
+        this.updateMessagesList();
+
         const requestElement = document.createElement('div');
         requestElement.className = 'fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 z-50';
         requestElement.innerHTML = `
@@ -176,6 +182,63 @@ const CHAT = {
             </div>
         `;
         document.body.appendChild(requestElement);
+    },
+
+    // Add message to inbox and update UI
+    addMessageToInbox(message) {
+        this.inboxMessages.push(message);
+        this.updateMessagesList();
+    },
+
+    // Update messages list UI
+    updateMessagesList() {
+        const messagesList = document.getElementById('messagesList');
+        if (!messagesList) return;
+
+        if (this.inboxMessages.length === 0 && this.inboxRequests.length === 0) {
+            messagesList.innerHTML = `<p class="text-gray-500">No new messages or requests.</p>`;
+            return;
+        }
+
+        let html = '';
+
+        // List private chat requests
+        this.inboxRequests.forEach(req => {
+            html += `
+                <div class="p-3 border rounded-lg mb-2 bg-gray-50 flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold">${req.fromUsername} wants to start a private chat</p>
+                        <p class="text-sm text-gray-600">${new Date(req.timestamp).toLocaleString()}</p>
+                    </div>
+                    <div class="space-x-2">
+                        <button class="px-3 py-1 bg-indigo-600 text-white rounded-md text-sm"
+                            onclick="CHAT.acceptPrivateChat('${req.from}', '${req.fromUsername}')">
+                            Accept
+                        </button>
+                        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm"
+                            onclick="CHAT.rejectPrivateChat('${req.from}')">
+                            Decline
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // List private messages
+        this.inboxMessages.forEach(msg => {
+            html += `
+                <div class="p-3 border rounded-lg mb-2 bg-white flex justify-between items-center cursor-pointer hover:bg-gray-100"
+                    onclick="CHAT.switchToPrivateChat('${[msg.senderId, JSON.parse(sessionStorage.getItem('user')).id].sort().join('-')}', '${msg.sender}')">
+                    <div>
+                        <p class="font-semibold">${msg.sender}</p>
+                        <p class="text-sm text-gray-600">${msg.text.length > 30 ? msg.text.substring(0, 30) + '...' : msg.text}</p>
+                    </div>
+                    <div class="text-xs text-gray-500">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
+                </div>
+            `;
+        });
+
+        messagesList.innerHTML = html;
     },
 
     // Accept private chat
