@@ -43,7 +43,7 @@ const AUTH = {
         // Check if username already taken (except admin)
         if (username !== 'admin') {
             const existingUserData = localStorage.getItem(`user_data_${username}`);
-            if (existingUserData && !sessionStorage.getItem('user')) {
+            if (existingUserData && (!sessionStorage.getItem('user') || JSON.parse(sessionStorage.getItem('user')).username !== username)) {
                 alert('Username already taken. Please choose another.');
                 return false;
             }
