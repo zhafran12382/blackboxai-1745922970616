@@ -110,6 +110,8 @@ const ABLY = {
         // Subscribe to messages
         privateChannel.subscribe('message', (message) => {
             callback(message.data);
+            // Add message to inbox for notification
+            CHAT.addMessageToInbox(message.data);
         });
 
         // Store channel reference
