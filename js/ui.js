@@ -68,7 +68,15 @@ const UI = {
 
         // Update header title
         const header = document.querySelector('header h1');
-        
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Hide or show chat messages container based on route
+        if (['profile', 'add-user', 'servers', 'messages'].includes(route)) {
+            if (chatMessages) chatMessages.style.display = 'none';
+        } else {
+            if (chatMessages) chatMessages.style.display = 'block';
+        }
+
         // Handle different routes
         switch(route) {
             case 'profile':
@@ -83,6 +91,10 @@ const UI = {
                 header.textContent = 'Add User';
                 this.showAddUser();
                 break;
+            case 'messages':
+                header.textContent = 'Inbox';
+                this.showMessages();
+                break;
             case 'servers':
                 header.textContent = 'Server List';
                 this.showServerList();
@@ -94,10 +106,6 @@ const UI = {
     showProfile() {
         const user = JSON.parse(sessionStorage.getItem('user'));
         const chatArea = document.getElementById('chatMessages');
-        const chatContainer = document.querySelector('.h-screen.flex.flex-col');
-
-        // Hide chat container
-        if (chatContainer) chatContainer.style.display = 'none';
 
         chatArea.innerHTML = `
             <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
@@ -118,6 +126,7 @@ const UI = {
     // Show add user section
     showAddUser() {
         const chatArea = document.getElementById('chatMessages');
+
         chatArea.innerHTML = `
             <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
                 <h2 class="text-xl font-semibold mb-4">Add User for Private Chat</h2>
@@ -125,7 +134,7 @@ const UI = {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">User ID</label>
                         <input type="text" id="privateUserId" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             placeholder="Enter user ID">
                     </div>
                     <button onclick="CHAT.sendPrivateChatRequest(document.getElementById('privateUserId').value)"
@@ -135,6 +144,24 @@ const UI = {
                 </div>
             </div>
         `;
+    },
+
+    // Show messages inbox section
+    showMessages() {
+        const chatArea = document.getElementById('chatMessages');
+        chatArea.innerHTML = `
+            <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
+                <h2 class="text-xl font-semibold mb-4">Messages Inbox</h2>
+                <div id="messagesList" class="space-y-4 max-h-[400px] overflow-y-auto">
+                    <p class="text-gray-500">No new messages or requests.</p>
+                </div>
+            </div>
+        `;
+
+        // Update messages list from CHAT module
+        if (window.CHAT) {
+            CHAT.updateMessagesList();
+        }
     },
 
     // Show server list section
@@ -161,24 +188,6 @@ const UI = {
                 </div>
             </div>
         `;
-    },
-
-    // Show messages inbox section
-    showMessages() {
-        const chatArea = document.getElementById('chatMessages');
-        chatArea.innerHTML = `
-            <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 fade-in">
-                <h2 class="text-xl font-semibold mb-4">Messages Inbox</h2>
-                <div id="messagesList" class="space-y-4 max-h-[400px] overflow-y-auto">
-                    <p class="text-gray-500">No new messages or requests.</p>
-                </div>
-            </div>
-        `;
-
-        // Update messages list from CHAT module
-        if (window.CHAT) {
-            CHAT.updateMessagesList();
-        }
     },
 
     // Show toast notification
