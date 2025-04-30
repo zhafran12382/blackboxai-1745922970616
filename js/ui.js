@@ -72,9 +72,9 @@ const UI = {
 
         // Hide or show chat messages container based on route
         if (['profile', 'add-user', 'servers', 'messages'].includes(route)) {
-            if (chatMessages) chatMessages.style.display = 'none';
+            if (chatMessages) chatMessages.style.visibility = 'hidden';
         } else {
-            if (chatMessages) chatMessages.style.display = 'block';
+            if (chatMessages) chatMessages.style.visibility = 'visible';
         }
 
         // Handle different routes
